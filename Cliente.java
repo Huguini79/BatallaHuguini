@@ -31,6 +31,7 @@ public class Cliente {
                 JButton boton_tocado = new JButton("Tocado");
                 JButton boton_dibujar_barco = new JButton("Dibujar barco");
                 JButton boton_continuar_normal = new JButton("Continuar normal sin dibujar barco");
+                JButton boton_dejar_normal = new JButton("Dejar normal sin elegir agua ni tocado por el momento");
                 frame_tablero.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frame_tablero.setResizable(true);
                 frame_tablero.setSize(900, 700);
@@ -40,6 +41,8 @@ public class Cliente {
                 frame_tablero.add(boton_tocado, BorderLayout.SOUTH);
                 frame_tablero.add(boton_dibujar_barco, BorderLayout.SOUTH);
                 frame_tablero.add(boton_continuar_normal, BorderLayout.SOUTH);
+                frame_tablero.add(boton_dejar_normal, BorderLayout.SOUTH);
+                frame_tablero.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
                 boton_dibujar_barco.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
@@ -52,6 +55,13 @@ public class Cliente {
                     }
                 });
 
+                boton_dejar_normal.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        agua = false;
+                        tocado = false;
+                    }
+                });
+
                 JPanel panel_columnas = new JPanel(new GridLayout(1, 11));
                 panel_columnas.setBackground(Color.YELLOW);
                 panel_columnas.add(new JLabel(""));
@@ -61,12 +71,12 @@ public class Cliente {
                     panel_columnas.add(label);
                 }
 
-                JPanel panel_centro = new JPanel(new GridLayout(9, 11));
+                JPanel panel_centro = new JPanel(new GridLayout(10, 11));
                 panel_centro.setBackground(Color.YELLOW);
                 char fila = 'A';
                 // Matriz para guardar los botones
-                JButton[][] botones = new JButton[9][10];
-                for (int i = 0; i < 9; i++) {
+                JButton[][] botones = new JButton[10][10];
+                for (int i = 0; i < 10; i++) {
                     JLabel label_fila = new JLabel(String.valueOf((char)(fila + i)), SwingConstants.CENTER);
                     label_fila.setFont(new Font("Arial", Font.BOLD, 20));
                     panel_centro.add(label_fila);
@@ -114,7 +124,7 @@ public class Cliente {
 
                 frame_tablero.add(panel_columnas, BorderLayout.NORTH);
                 frame_tablero.add(panel_centro, BorderLayout.CENTER);
-                JLabel label_chat = new JLabel("Introduce tu mensaje(podrás ver tu mensaje en el cmd/terminal): ");
+                JLabel label_chat = new JLabel("Introduce tu mensaje:");
                 JTextField textfield_chat = new JTextField(20);
                 JButton boton_enviar_mensaje = new JButton("Enviar mensaje");
                 frame_tablero.requestFocusInWindow();
