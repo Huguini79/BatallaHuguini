@@ -18,6 +18,8 @@ public class Cliente {
     public static String usuario_logeado;
     public static String contrasena_logeada;
 
+    public static boolean dibujar_barco = false;
+
     public static void videojuego_main() {
         JFrame frame_videojuego = new JFrame("BatallaHuguini");
         JButton boton_abrir_chat = new JButton("Escribir un mensaje en el chat del servidor(puede ser personalizado)");
@@ -61,7 +63,28 @@ public class Cliente {
         });
         boton_ver_tablero.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                JFrame frame_dibujar_tablero = new JFrame("Opciones del tablero");
+                JButton boton_dibujar_barco = new JButton("Dibujar barco");
+                JButton boton_continuar_normal = new JButton("Continuar normal sin dibujar barco");
                 JFrame frame_tablero = new JFrame("Tablero");
+                frame_dibujar_tablero.requestFocusInWindow();
+                frame_dibujar_tablero.setVisible(true);
+                frame_dibujar_tablero.setResizable(false);
+                frame_dibujar_tablero.setSize(660, 550);
+                frame_dibujar_tablero.getContentPane().setBackground(Color.YELLOW);
+                frame_dibujar_tablero.setLayout(new BoxLayout(frame_dibujar_tablero.getContentPane(), BoxLayout.Y_AXIS));
+                frame_dibujar_tablero.add(boton_dibujar_barco);
+                frame_dibujar_tablero.add(boton_continuar_normal);
+                boton_dibujar_barco.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        dibujar_barco = true;
+                    }
+                });
+                boton_continuar_normal.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        dibujar_barco = false;
+                    }
+                });
                 frame_tablero.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frame_tablero.setResizable(true);
                 frame_tablero.setSize(900, 700);
@@ -94,11 +117,15 @@ public class Cliente {
                         botones[i][j] = boton;
                         boton.addActionListener(new ActionListener() {
                             public void actionPerformed(ActionEvent e) {
-                                // boton.setBackground(Color.RED);
-                                try {
-                                    interfaz.enviar_mensaje("Huguini ha elegido: " + (char)('A' + filaBtn) + "," + (colBtn + 1));
-                                } catch (RemoteException e1) {
-                                    e1.printStackTrace();
+                                if(dibujar_barco == true) {
+                                    boton.setBackground(Color.RED);
+                                
+                                } else {
+                                    try {
+                                        interfaz.enviar_mensaje("Huguini ha elegido: " + (char)('A' + filaBtn) + "," + (colBtn + 1));
+                                    } catch (RemoteException e1) {
+                                        e1.printStackTrace();
+                                    }
                                 }
                             }
                         });
@@ -119,7 +146,7 @@ public class Cliente {
     }
     
     public static void main(String[] args) throws RemoteException, NotBoundException {
-        registry = LocateRegistry.getRegistry("localhost", 1100);
+        registry = LocateRegistry.getRegistry("192.168.1.167", 1100);
         interfaz = (Interfaz) registry.lookup("BatallaHuguini");
         JFrame frame = new JFrame("Bienvenido al videojuego BatallaHuguini");
         JButton boton_logear = new JButton("Iniciar sesión");
