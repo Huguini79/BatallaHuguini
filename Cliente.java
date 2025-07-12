@@ -19,62 +19,28 @@ public class Cliente {
     public static String contrasena_logeada;
 
     public static boolean dibujar_barco = false;
+    public static boolean agua = false;
+    public static boolean tocado = false;
+
+    public static JTextArea area_chat;
 
     public static void videojuego_main() {
-        JFrame frame_videojuego = new JFrame("BatallaHuguini");
-        JButton boton_abrir_chat = new JButton("Escribir un mensaje en el chat del servidor(puede ser personalizado)");
-        JButton boton_ver_tablero = new JButton("Ver tablero");
-        JButton boton_salir = new JButton("Salir");
-        frame_videojuego.requestFocusInWindow();
-        frame_videojuego.setResizable(false);
-        frame_videojuego.setVisible(true);
-        frame_videojuego.setSize(660, 550);
-        frame_videojuego.getContentPane().setBackground(Color.YELLOW);
-        frame_videojuego.setLayout(new BoxLayout(frame_videojuego.getContentPane(), BoxLayout.Y_AXIS));
-        frame_videojuego.add(boton_abrir_chat);
-        frame_videojuego.add(boton_ver_tablero);
-        frame_videojuego.add(boton_salir);
-        boton_abrir_chat.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JFrame frame_chat = new JFrame("Chat del servidor");
-                JLabel label_chat = new JLabel("Introduce tu mensaje(podrás ver tu mensaje en el cmd/terminal): ");
-                JTextField textfield_chat = new JTextField(20);
-                JButton boton_enviar_mensaje = new JButton("Enviar mensaje");
-                frame_chat.requestFocusInWindow();
-                frame_chat.setResizable(false);
-                frame_chat.setVisible(true);
-                frame_chat.setSize(660, 550);
-                frame_chat.getContentPane().setBackground(Color.YELLOW);
-                frame_chat.setLayout(new BoxLayout(frame_chat.getContentPane(), BoxLayout.Y_AXIS));
-                frame_chat.add(label_chat);
-                frame_chat.add(textfield_chat);
-                frame_chat.add(boton_enviar_mensaje);
-                boton_enviar_mensaje.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        String mensaje = textfield_chat.getText();
-                        try {
-                            interfaz.enviar_mensaje(usuario_logeado +": "+ mensaje);
-                        } catch (RemoteException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
-        boton_ver_tablero.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JFrame frame_dibujar_tablero = new JFrame("Opciones del tablero");
+        
+                JFrame frame_tablero = new JFrame("Tablero");
+                JButton boton_agua = new JButton("Agua");
+                JButton boton_tocado = new JButton("Tocado");
                 JButton boton_dibujar_barco = new JButton("Dibujar barco");
                 JButton boton_continuar_normal = new JButton("Continuar normal sin dibujar barco");
-                JFrame frame_tablero = new JFrame("Tablero");
-                frame_dibujar_tablero.requestFocusInWindow();
-                frame_dibujar_tablero.setVisible(true);
-                frame_dibujar_tablero.setResizable(false);
-                frame_dibujar_tablero.setSize(660, 550);
-                frame_dibujar_tablero.getContentPane().setBackground(Color.YELLOW);
-                frame_dibujar_tablero.setLayout(new BoxLayout(frame_dibujar_tablero.getContentPane(), BoxLayout.Y_AXIS));
-                frame_dibujar_tablero.add(boton_dibujar_barco);
-                frame_dibujar_tablero.add(boton_continuar_normal);
+                frame_tablero.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame_tablero.setResizable(true);
+                frame_tablero.setSize(900, 700);
+                frame_tablero.getContentPane().setBackground(Color.YELLOW);
+                frame_tablero.setLayout(new BorderLayout());
+                frame_tablero.add(boton_agua, BorderLayout.SOUTH);
+                frame_tablero.add(boton_tocado, BorderLayout.SOUTH);
+                frame_tablero.add(boton_dibujar_barco, BorderLayout.SOUTH);
+                frame_tablero.add(boton_continuar_normal, BorderLayout.SOUTH);
+
                 boton_dibujar_barco.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         dibujar_barco = true;
@@ -85,11 +51,6 @@ public class Cliente {
                         dibujar_barco = false;
                     }
                 });
-                frame_tablero.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                frame_tablero.setResizable(true);
-                frame_tablero.setSize(900, 700);
-                frame_tablero.getContentPane().setBackground(Color.YELLOW);
-                frame_tablero.setLayout(new BorderLayout());
 
                 JPanel panel_columnas = new JPanel(new GridLayout(1, 11));
                 panel_columnas.setBackground(Color.YELLOW);
@@ -122,31 +83,79 @@ public class Cliente {
                                 
                                 } else {
                                     try {
-                                        interfaz.enviar_mensaje("Huguini ha elegido: " + (char)('A' + filaBtn) + "," + (colBtn + 1));
+                                        interfaz.enviar_mensaje(usuario_logeado+" ha elegido: " + (char)('A' + filaBtn) + "," + (colBtn + 1));
                                     } catch (RemoteException e1) {
                                         e1.printStackTrace();
                                     }
                                 }
+                                if(agua == true) {
+                                    boton.setText(".");
+                                }
+                                
+                                if(tocado == true) {
+                                    boton.setText("X");
+                                }
                             }
                         });
                         panel_centro.add(boton);
+                        boton_agua.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                agua = true;
+                            }
+                        });
+
+                        boton_tocado.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                tocado = true;
+                            }
+                        });
                     }
                 }
 
                 frame_tablero.add(panel_columnas, BorderLayout.NORTH);
                 frame_tablero.add(panel_centro, BorderLayout.CENTER);
+                JLabel label_chat = new JLabel("Introduce tu mensaje(podrás ver tu mensaje en el cmd/terminal): ");
+                JTextField textfield_chat = new JTextField(20);
+                JButton boton_enviar_mensaje = new JButton("Enviar mensaje");
+                frame_tablero.requestFocusInWindow();
+                frame_tablero.setResizable(true);
                 frame_tablero.setVisible(true);
-            }
-        });
-        boton_salir.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+                frame_tablero.setSize(660, 550);
+                frame_tablero.getContentPane().setBackground(Color.YELLOW);
+                frame_tablero.setLayout(new BoxLayout(frame_tablero.getContentPane(), BoxLayout.Y_AXIS));
+                frame_tablero.add(label_chat);
+                frame_tablero.add(textfield_chat);
+                frame_tablero.add(boton_enviar_mensaje);
+
+                area_chat = new JTextArea(10, 30);
+                area_chat.setEditable(false);
+                area_chat.setLineWrap(true);
+                area_chat.setWrapStyleWord(true);
+
+                JScrollPane scroll_chat = new JScrollPane(area_chat);
+                scroll_chat.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+                frame_tablero.add(scroll_chat, BorderLayout.EAST);
+
+                area_chat.setCaretPosition(area_chat.getDocument().getLength());
+
+                boton_enviar_mensaje.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        String mensaje = textfield_chat.getText();
+                        try {
+                            interfaz.enviar_mensaje(usuario_logeado +": "+ mensaje);
+                        } catch (RemoteException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                });
+                frame_tablero.setVisible(true);
+        
+       
     }
     
     public static void main(String[] args) throws RemoteException, NotBoundException {
-        registry = LocateRegistry.getRegistry("192.168.1.167", 1100);
+        registry = LocateRegistry.getRegistry("localhost", 1100);
         interfaz = (Interfaz) registry.lookup("BatallaHuguini");
         JFrame frame = new JFrame("Bienvenido al videojuego BatallaHuguini");
         JButton boton_logear = new JButton("Iniciar sesión");
@@ -218,7 +227,10 @@ public class Cliente {
                                         String mensajeNuevo = entrada.getValue();
                                         String mensajeViejo = historial.get(clave);
                                         if (mensajeViejo == null || !mensajeViejo.equals(mensajeNuevo)) {
-                                            System.out.println("" + clave + "" + mensajeNuevo);
+                                         SwingUtilities.invokeLater(() -> {
+                                            area_chat.append(clave + ": " + mensajeNuevo + "\n");
+                                            });
+                                            System.out.println(clave + ": " + mensajeNuevo);
                                             historial.put(clave, mensajeNuevo);
                                             hayNuevo = true;
                                         }
@@ -231,7 +243,7 @@ public class Cliente {
                                     break;
                                 }
                             }
-                        }).start(); // <-- Muy importante
+                        }).start();
 
 
                         } else {
@@ -278,7 +290,7 @@ public class Cliente {
                             String contrasena_registrada = textfield_contrasena_registrar.getText();
                             try {
                                 interfaz.enviar_datos_login(usuario_registrado, contrasena_registrada);
-                                JOptionPane.showMessageDialog(null, "Usuario y contraseña registradas correctamente", "Usuarios y contraseñas registradas correctamente", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Usuario y contraseña registradas correctamente", "Usuario y contraseña registradas correctamente", JOptionPane.INFORMATION_MESSAGE);
                                 frame3.dispose();
                             } catch (RemoteException e1) {
                                 e1.printStackTrace();
