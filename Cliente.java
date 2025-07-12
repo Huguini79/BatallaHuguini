@@ -20,8 +20,9 @@ public class Cliente {
 
     public static void videojuego_main() {
         JFrame frame_videojuego = new JFrame("BatallaHuguini");
-        JButton boton_abrir_chat = new JButton("Abrir chat del servidor");
+        JButton boton_abrir_chat = new JButton("Escribir un mensaje en el chat del servidor(puede ser personalizado)");
         JButton boton_ver_tablero = new JButton("Ver tablero");
+        JButton boton_salir = new JButton("Salir");
         frame_videojuego.requestFocusInWindow();
         frame_videojuego.setResizable(false);
         frame_videojuego.setVisible(true);
@@ -30,10 +31,11 @@ public class Cliente {
         frame_videojuego.setLayout(new BoxLayout(frame_videojuego.getContentPane(), BoxLayout.Y_AXIS));
         frame_videojuego.add(boton_abrir_chat);
         frame_videojuego.add(boton_ver_tablero);
+        frame_videojuego.add(boton_salir);
         boton_abrir_chat.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFrame frame_chat = new JFrame("Chat del servidor");
-                JLabel label_chat = new JLabel("Introduce tu mensaje(podrás ver tu mensaje en el cmd/terminal):");
+                JLabel label_chat = new JLabel("Introduce tu mensaje(podrás ver tu mensaje en el cmd/terminal): ");
                 JTextField textfield_chat = new JTextField(20);
                 JButton boton_enviar_mensaje = new JButton("Enviar mensaje");
                 frame_chat.requestFocusInWindow();
@@ -55,6 +57,63 @@ public class Cliente {
                         }
                     }
                 });
+            }
+        });
+        boton_ver_tablero.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFrame frame_tablero = new JFrame("Tablero");
+                frame_tablero.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame_tablero.setResizable(true);
+                frame_tablero.setSize(900, 700);
+                frame_tablero.getContentPane().setBackground(Color.YELLOW);
+                frame_tablero.setLayout(new BorderLayout());
+
+                JPanel panel_columnas = new JPanel(new GridLayout(1, 11));
+                panel_columnas.setBackground(Color.YELLOW);
+                panel_columnas.add(new JLabel(""));
+                for (int col = 1; col <= 10; col++) {
+                    JLabel label = new JLabel(String.valueOf(col), SwingConstants.CENTER);
+                    label.setFont(new Font("Arial", Font.BOLD, 20));
+                    panel_columnas.add(label);
+                }
+
+                JPanel panel_centro = new JPanel(new GridLayout(9, 11));
+                panel_centro.setBackground(Color.YELLOW);
+                char fila = 'A';
+                // Matriz para guardar los botones
+                JButton[][] botones = new JButton[9][10];
+                for (int i = 0; i < 9; i++) {
+                    JLabel label_fila = new JLabel(String.valueOf((char)(fila + i)), SwingConstants.CENTER);
+                    label_fila.setFont(new Font("Arial", Font.BOLD, 20));
+                    panel_centro.add(label_fila);
+                    for (int j = 0; j < 10; j++) {
+                        final int filaBtn = i;
+                        final int colBtn = j;
+                        JButton boton = new JButton();
+                        boton.setPreferredSize(new Dimension(50, 50));
+                        botones[i][j] = boton;
+                        boton.addActionListener(new ActionListener() {
+                            public void actionPerformed(ActionEvent e) {
+                                // boton.setBackground(Color.RED);
+                                try {
+                                    interfaz.enviar_mensaje("Huguini ha elegido: " + (char)('A' + filaBtn) + "," + (colBtn + 1));
+                                } catch (RemoteException e1) {
+                                    e1.printStackTrace();
+                                }
+                            }
+                        });
+                        panel_centro.add(boton);
+                    }
+                }
+
+                frame_tablero.add(panel_columnas, BorderLayout.NORTH);
+                frame_tablero.add(panel_centro, BorderLayout.CENTER);
+                frame_tablero.setVisible(true);
+            }
+        });
+        boton_salir.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
             }
         });
     }
